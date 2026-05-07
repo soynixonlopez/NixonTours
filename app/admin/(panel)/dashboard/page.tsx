@@ -20,7 +20,7 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="text-2xl font-extrabold text-[#0f172a]">Dashboard</h1>
+        <h1 className="text-2xl font-extrabold font-display text-brand-deep">Dashboard</h1>
         <p className="text-sm text-slate-600">Resumen de actividad Nixon Tours.</p>
       </div>
 
@@ -33,21 +33,21 @@ export default async function AdminDashboardPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Button asChild variant="outline" className="h-auto justify-between py-4">
           <Link href="/admin/cotizaciones" className="flex w-full items-center gap-3">
-            <MessageSquareQuote className="h-5 w-5 text-cyan-600" />
+            <MessageSquareQuote className="h-5 w-5 text-brand-turquoise" />
             Cotizaciones
             <ArrowRight className="h-4 w-4" />
           </Link>
         </Button>
         <Button asChild variant="outline" className="h-auto justify-between py-4">
           <Link href="/admin/paquetes" className="flex w-full items-center gap-3">
-            <Package className="h-5 w-5 text-violet-600" />
+            <Package className="h-5 w-5 text-brand-aqua" />
             Paquetes
             <ArrowRight className="h-4 w-4" />
           </Link>
         </Button>
         <Button asChild variant="outline" className="h-auto justify-between py-4">
           <Link href="/admin/islas" className="flex w-full items-center gap-3">
-            <MapPin className="h-5 w-5 text-emerald-600" />
+            <MapPin className="h-5 w-5 text-brand-sunset" />
             Islas
             <ArrowRight className="h-4 w-4" />
           </Link>
@@ -56,7 +56,7 @@ export default async function AdminDashboardPage() {
 
       <div>
         <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-bold text-[#0f172a]">Cotizaciones recientes</h2>
+          <h2 className="text-lg font-bold font-display text-brand-deep">Cotizaciones recientes</h2>
           <Button asChild size="sm" variant="ghost">
             <Link href="/admin/cotizaciones">Ver todas</Link>
           </Button>

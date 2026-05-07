@@ -15,7 +15,7 @@ export default async function EditarPaquetePage({ params }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-[#0f172a]">Editar paquete</h1>
+        <h1 className="text-2xl font-extrabold font-display text-brand-deep">Editar paquete</h1>
         <p className="text-sm text-slate-600">{initial.name}</p>
       </div>
       <PackageForm islands={islands} initial={initial} />

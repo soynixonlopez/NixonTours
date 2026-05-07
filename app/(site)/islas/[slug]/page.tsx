@@ -37,7 +37,7 @@ export default async function IslaDetailPage({ params }: Props) {
     <div className="bg-[#F8FAFC] pb-24 pt-8">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <nav className="text-sm text-slate-500">
-          <Link href="/islas" className="hover:text-cyan-600">
+          <Link href="/islas" className="hover:text-brand-turquoise">
             Islas
           </Link>
           <span className="mx-2">/</span>
@@ -56,20 +56,20 @@ export default async function IslaDetailPage({ params }: Props) {
             />
           </div>
           <div>
-            <h1 className="text-4xl font-extrabold text-[#0f172a]">{island.name}</h1>
-            <p className="mt-4 whitespace-pre-line text-lg leading-relaxed text-[#475569]">
+            <h1 className="text-4xl font-extrabold font-display text-brand-deep">{island.name}</h1>
+            <p className="mt-4 whitespace-pre-line text-lg leading-relaxed text-slate-600">
               {island.description}
             </p>
           </div>
         </div>
 
         <section className="mt-16">
-          <h2 className="text-2xl font-bold text-[#0f172a]">Paquetes disponibles</h2>
+          <h2 className="text-2xl font-bold font-display text-brand-deep">Paquetes disponibles</h2>
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
             {packages.length === 0 ? (
               <p className="text-sm text-slate-600">
                 Aún no hay paquetes activos para esta isla.{" "}
-                <Link href="/cotizar" className="font-medium text-cyan-600 underline">
+                <Link href="/cotizar" className="font-medium text-brand-turquoise underline">
                   Cotízanos
                 </Link>
                 .

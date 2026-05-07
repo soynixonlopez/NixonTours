@@ -13,6 +13,7 @@ import {
   getPackageBySlug,
   getSiteSettings,
 } from "@/lib/data";
+import { getAffiliateRefCookie } from "@/lib/ref";
 import { buildWhatsAppUrl, formatPricePAB, normalizeWhatsAppDigits, packageTypeLabel } from "@/lib/whatsapp";
 import { parseGallery } from "@/types/database";
 
@@ -33,10 +34,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PaqueteDetailPage({ params }: Props) {
   const { slug } = await params;
-  const [pkg, islands, settings] = await Promise.all([
+  const [pkg, islands, settings, affiliateCode] = await Promise.all([
     getPackageBySlug(slug),
     getActiveIslands(),
     getSiteSettings(),
+    getAffiliateRefCookie(),
   ]);
 
   if (!pkg) notFound();
@@ -65,7 +67,7 @@ export default async function PaqueteDetailPage({ params }: Props) {
     <div className="bg-[#F8FAFC] pb-24 pt-8">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <nav className="text-sm text-slate-500">
-          <Link href="/paquetes" className="hover:text-cyan-600">
+          <Link href="/paquetes" className="hover:text-brand-turquoise">
             Paquetes
           </Link>
           <span className="mx-2">/</span>
@@ -97,18 +99,18 @@ export default async function PaqueteDetailPage({ params }: Props) {
 
           <div>
             <Badge>{packageTypeLabel(pkg.type)}</Badge>
-            <h1 className="mt-3 text-3xl font-extrabold text-[#0f172a] sm:text-4xl">
+            <h1 className="mt-3 text-3xl font-extrabold font-display text-brand-deep sm:text-4xl">
               {pkg.name}
             </h1>
             <p className="mt-2 text-slate-600">{islandName}</p>
-            <p className="mt-2 text-4xl font-bold text-[#1e3a5f]">
+            <p className="mt-2 text-4xl font-bold text-brand-deep">
               {formatPricePAB(Number(pkg.price))}{" "}
               <span className="text-base font-medium text-slate-500">/ persona</span>
             </p>
             {pkg.duration && (
               <p className="mt-2 text-sm text-slate-600">Duración: {pkg.duration}</p>
             )}
-            <p className="mt-6 text-lg leading-relaxed text-[#475569]">
+            <p className="mt-6 text-lg leading-relaxed text-slate-600">
               {pkg.long_description || pkg.short_description}
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -126,11 +128,11 @@ export default async function PaqueteDetailPage({ params }: Props) {
             .map((b) => (
               <Card key={b.title} className="border-slate-200/90">
                 <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-2">
-                  <b.icon className="h-5 w-5 text-cyan-600" />
+                  <b.icon className="h-5 w-5 text-brand-turquoise" />
                   <CardTitle className="text-base">{b.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="whitespace-pre-line text-sm leading-relaxed text-[#475569]">
+                  <p className="whitespace-pre-line text-sm leading-relaxed text-slate-600">
                     {b.text}
                   </p>
                 </CardContent>
@@ -139,8 +141,8 @@ export default async function PaqueteDetailPage({ params }: Props) {
         </div>
 
         <section id="cotizar" className="mt-20 scroll-mt-28">
-          <h2 className="text-2xl font-bold text-[#0f172a]">Cotizar</h2>
-          <p className="mt-2 text-[#475569]">
+          <h2 className="text-2xl font-bold font-display text-brand-deep">Cotizar</h2>
+          <p className="mt-2 text-slate-600">
             Completa el formulario o escríbenos por WhatsApp con un clic.
           </p>
           <Card className="mt-6 border-slate-200">
@@ -152,6 +154,7 @@ export default async function PaqueteDetailPage({ params }: Props) {
                 defaultPackageId={pkg.id}
                 defaultPackageType={pkg.type}
                 packageName={pkg.name}
+                affiliateCode={affiliateCode}
               />
             </CardContent>
           </Card>

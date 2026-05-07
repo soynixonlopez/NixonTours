@@ -16,9 +16,11 @@ export function AdminHeader({ email }: { email: string }) {
   }
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6">
+    <header className="flex h-16 items-center justify-between border-b border-brand-deep/10 bg-brand-pearl px-6 shadow-sm shadow-brand-deep/5">
       <p className="truncate text-sm text-slate-600">
-        <span className="font-medium text-slate-900">{email || "Admin"}</span>
+        <span className="font-semibold font-display text-brand-deep">
+          {email || "Admin"}
+        </span>
       </p>
       <Button
         type="button"

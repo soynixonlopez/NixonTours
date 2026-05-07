@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { Button, type ButtonProps } from "@/components/ui/button";
@@ -18,7 +20,7 @@ export function WhatsAppButton({
       variant={variant}
       size={size}
       className={cn(
-        "bg-[#10B981] text-white shadow-md hover:bg-[#0ea271]",
+        "border-transparent bg-emerald-600 text-white shadow-md hover:bg-emerald-700 hover:text-white",
         className
       )}
       asChild

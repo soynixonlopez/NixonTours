@@ -19,8 +19,8 @@ export default async function GaleriaPage() {
   return (
     <div className="bg-[#F8FAFC] pb-24 pt-10">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-extrabold text-[#0f172a]">Galería</h1>
-        <p className="mt-3 max-w-2xl text-lg text-[#475569]">
+        <h1 className="text-4xl font-extrabold font-display text-brand-deep">Galería</h1>
+        <p className="mt-3 max-w-2xl text-lg text-slate-600">
           Colores del Caribe panameño, organizados por isla. ¿Quieres aparecer aquí?
           Envíanos tus fotos tras tu viaje.
         </p>

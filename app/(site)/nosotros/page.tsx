@@ -14,10 +14,10 @@ export default async function NosotrosPage() {
 
   return (
     <div>
-      <section className="relative overflow-hidden bg-[#0f172a] py-20 text-white">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,212,255,0.2),transparent_50%)]" />
+      <section className="relative overflow-hidden bg-brand-deep py-20 text-white">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,175,203,0.22),transparent_50%)]" />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300/90">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-aqua">
             Nixon Tours
           </p>
           <h1 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl">
@@ -35,16 +35,16 @@ export default async function NosotrosPage() {
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-2 md:items-center">
           <div>
-            <h2 className="text-3xl font-extrabold text-[#0f172a]">
+            <h2 className="text-3xl font-extrabold font-display text-brand-deep">
               Especialistas en Guna Yala
             </h2>
-            <p className="mt-4 text-[#475569]">
+            <p className="mt-4 text-slate-600">
               Nuestro enfoque prioriza la seguridad, la confianza y la cultura. Te
               ayudamos a elegir isla y paquete según tu tiempo, presupuesto y
               espíritu de aventura —sin perder el confort ni la claridad en la
               coordinación.
             </p>
-            <p className="mt-4 text-[#475569]">
+            <p className="mt-4 text-slate-600">
               Atendemos con el mismo cuidado a turistas locales y visitantes del
               exterior. Nixon Tours nace del deseo de compartir el Caribe
               panameño con respeto y calidad de servicio.
@@ -77,10 +77,10 @@ export default async function NosotrosPage() {
                 key={x.t}
                 className="flex gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
               >
-                <x.icon className="mt-1 h-6 w-6 shrink-0 text-cyan-500" />
+                <x.icon className="mt-1 h-6 w-6 shrink-0 text-brand-turquoise" />
                 <div>
-                  <h3 className="font-semibold text-[#0f172a]">{x.t}</h3>
-                  <p className="mt-1 text-sm text-[#475569]">{x.d}</p>
+                  <h3 className="font-semibold font-display text-brand-deep">{x.t}</h3>
+                  <p className="mt-1 text-sm text-slate-600">{x.d}</p>
                 </div>
               </div>
             ))}

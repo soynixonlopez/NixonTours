@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Sparkles, Shield, Heart, Leaf, Compass } from "lucide-react";
+import { Sparkles, Shield, Heart, Leaf, Compass, Crown, ArrowRight } from "lucide-react";
 import { HeroSection } from "@/components/site/hero-section";
 import { IslandCard } from "@/components/site/island-card";
 import { PackageCard } from "@/components/site/package-card";
@@ -53,13 +53,13 @@ export default async function HomePage() {
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-600">
+            <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-brand-turquoise">
               Islas destacadas
             </p>
-            <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-[#0f172a]">
+            <h2 className="mt-2 font-display text-3xl font-extrabold tracking-tight text-brand-deep">
               Paraísos que enamoran
             </h2>
-            <p className="mt-2 max-w-2xl text-[#475569]">
+            <p className="mt-2 max-w-2xl text-slate-600">
               Isla Naranjo Chico es nuestra insignia. También llevamos a Senidub,
               Pelícano, Pugsub, Diablo y las islas Perro.
             </p>
@@ -79,17 +79,17 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-white py-16">
+      <section className="bg-brand-pearl py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-600">
+              <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-brand-turquoise">
                 Paquetes populares
               </p>
-              <h2 className="mt-2 text-3xl font-extrabold text-[#0f172a]">
+              <h2 className="mt-2 font-display text-3xl font-extrabold text-brand-deep">
                 Precios transparentes, experiencia premium
               </h2>
-              <p className="mt-2 max-w-2xl text-[#475569]">
+              <p className="mt-2 max-w-2xl text-slate-600">
                 Cotiza en minutos y recibe asistencia real de nuestro equipo.
               </p>
             </div>
@@ -110,10 +110,10 @@ export default async function HomePage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
-        <h2 className="text-center text-3xl font-extrabold text-[#0f172a]">
+        <h2 className="text-center font-display text-3xl font-extrabold text-brand-deep">
           ¿Por qué viajar con Nixon Tours?
         </h2>
-        <p className="mx-auto mt-3 max-w-2xl text-center text-[#475569]">
+        <p className="mx-auto mt-3 max-w-2xl text-center text-slate-600">
           Descubre las mejores islas de Guna Yala con una agencia local y
           familiar. Seguridad, cultura y atención personalizada en cada salida.
         </p>
@@ -137,33 +137,35 @@ export default async function HomePage() {
           ].map((item) => (
             <div
               key={item.t}
-              className="rounded-2xl border border-slate-200 bg-[#F8FAFC] p-6 shadow-sm"
+              className="rounded-2xl border border-brand-deep/10 bg-brand-soft/80 p-6 shadow-md shadow-brand-deep/5"
             >
-              <item.icon className="h-8 w-8 text-cyan-500" />
-              <h3 className="mt-4 text-lg font-semibold text-[#0f172a]">{item.t}</h3>
-              <p className="mt-2 text-sm text-[#475569]">{item.d}</p>
+              <item.icon className="h-8 w-8 text-brand-turquoise" />
+              <h3 className="mt-4 font-display text-lg font-semibold text-brand-deep">
+                {item.t}
+              </h3>
+              <p className="mt-2 text-sm text-slate-600">{item.d}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="border-y border-slate-200 bg-white py-20">
+      <section className="border-y border-brand-deep/10 bg-brand-pearl py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-center text-3xl font-extrabold text-[#0f172a]">
+          <h2 className="text-center font-display text-3xl font-extrabold text-brand-deep">
             Tu viaje en 4 pasos
           </h2>
           <div className="mt-12 grid gap-6 md:grid-cols-4">
             {steps.map((s, idx) => (
               <div
                 key={s.title}
-                className="relative rounded-2xl border border-slate-200/80 p-5"
+                className="relative rounded-2xl border border-brand-deep/10 bg-brand-pearl p-5 shadow-sm"
               >
-                <span className="text-xs font-bold text-cyan-600">
+                <span className="font-display text-xs font-bold text-brand-sunset">
                   {String(idx + 1).padStart(2, "0")}
                 </span>
-                <s.icon className="mt-3 h-7 w-7 text-[#8B5CF6]" />
-                <h3 className="mt-3 font-semibold text-[#0f172a]">{s.title}</h3>
-                <p className="mt-2 text-sm text-[#475569]">{s.desc}</p>
+                <s.icon className="mt-3 h-7 w-7 text-brand-aqua" />
+                <h3 className="mt-3 font-display font-semibold text-brand-deep">{s.title}</h3>
+                <p className="mt-2 text-sm text-slate-600">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -171,7 +173,7 @@ export default async function HomePage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
-        <h2 className="text-center text-3xl font-extrabold text-[#0f172a]">
+        <h2 className="text-center font-display text-3xl font-extrabold text-brand-deep">
           Testimonios
         </h2>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
@@ -196,14 +198,14 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-[#F8FAFC] py-20">
+      <section className="bg-brand-soft py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <h2 className="text-3xl font-extrabold text-[#0f172a]">
+              <h2 className="font-display text-3xl font-extrabold text-brand-deep">
                 Galería visual
               </h2>
-              <p className="mt-2 text-[#475569]">
+              <p className="mt-2 text-slate-600">
                 Un adelanto del color del Caribe panameño.
               </p>
             </div>
@@ -217,6 +219,66 @@ export default async function HomePage() {
             ) : (
               <GalleryGrid islands={islands.slice(0, 3)} />
             )}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden border-y border-brand-deep/10 bg-gradient-to-br from-brand-deep via-[#173356] to-brand-deep py-20 text-brand-pearl">
+        <div
+          className="pointer-events-none absolute -right-24 top-0 h-64 w-64 rounded-full bg-brand-turquoise/15 blur-3xl"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute -left-24 bottom-0 h-56 w-56 rounded-full bg-brand-aqua/10 blur-3xl"
+          aria-hidden
+        />
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-10 lg:grid-cols-[1fr,auto] lg:items-center lg:gap-12">
+            <div>
+              <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-brand-aqua">
+                Nixon Premium Club
+              </p>
+              <h2 className="mt-3 font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
+                Tu portal exclusivo para Guna Yala
+              </h2>
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-brand-pearl/80">
+                Crea tu cuenta y accede a promociones anticipadas, prioridad en
+                reservas, seguimiento de pagos y beneficios pensados para quienes
+                vuelven al paraíso.
+              </p>
+              <ul className="mt-6 space-y-2 text-sm text-brand-pearl/75">
+                {[
+                  "Historial de viajes y próximas salidas en un solo lugar",
+                  "Abonos y comprobantes con seguimiento claro del saldo",
+                  "Promociones y prioridad cuando confirmes Nixon Premium Club",
+                ].map((item) => (
+                  <li key={item} className="flex gap-2">
+                    <Crown className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row xl:justify-end">
+              <Button
+                asChild
+                size="lg"
+                className="rounded-2xl bg-brand-turquoise font-display font-bold text-brand-deep shadow-lg shadow-brand-deep/25 hover:bg-brand-pearl"
+              >
+                <Link href="/registro" className="inline-flex items-center gap-2">
+                  Crear mi cuenta gratuita
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="rounded-2xl border-brand-pearl/40 bg-transparent font-display font-semibold text-brand-pearl hover:bg-white/10 hover:text-brand-pearl"
+              >
+                <Link href="/premium">Conocer planes Premium</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>

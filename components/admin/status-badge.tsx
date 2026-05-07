@@ -2,10 +2,14 @@ import { cn } from "@/lib/utils";
 import type { QuoteStatus } from "@/types/database";
 
 const styles: Record<QuoteStatus, string> = {
-  nueva: "bg-amber-50 text-amber-900 ring-amber-200",
-  contactado: "bg-sky-50 text-sky-900 ring-sky-200",
-  reservado: "bg-emerald-50 text-emerald-900 ring-emerald-200",
-  cancelado: "bg-slate-100 text-slate-700 ring-slate-200",
+  nueva:
+    "bg-brand-sunset/15 text-brand-deep ring-brand-sunset/40 font-display font-semibold",
+  contactado:
+    "bg-brand-soft text-brand-deep ring-brand-turquoise/40 font-medium",
+  reservado:
+    "bg-brand-turquoise/12 text-brand-deep ring-brand-turquoise/35 font-semibold",
+  cancelado:
+    "bg-slate-100 text-slate-700 ring-slate-200",
 };
 
 export function StatusBadge({
@@ -27,7 +31,7 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset",
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs ring-1 ring-inset",
         styles[status] ?? "bg-slate-100 text-slate-700",
         className
       )}

@@ -20,13 +20,13 @@ export default async function AdminConfigPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-[#0f172a]">Configuración</h1>
+        <h1 className="text-2xl font-extrabold font-display text-brand-deep">Configuración</h1>
         <p className="text-sm text-slate-600">
           Datos de contacto, redes y textos del hero. El logo debe ser la imagen oficial
           sin alteraciones — súbela aquí y úsala en navbar y footer.
         </p>
         <p className="mt-2 text-xs text-slate-500">
-          <Link href="/" className="text-cyan-600 hover:underline">
+          <Link href="/" className="text-brand-turquoise hover:underline">
             Ver sitio público
           </Link>
         </p>

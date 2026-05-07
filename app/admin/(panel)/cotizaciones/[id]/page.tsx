@@ -24,11 +24,11 @@ export default async function AdminCotizacionDetailPage({ params }: Props) {
         <div>
           <Link
             href="/admin/cotizaciones"
-            className="text-xs font-medium text-cyan-600 hover:underline"
+            className="text-xs font-medium text-brand-turquoise hover:underline"
           >
             ← Cotizaciones
           </Link>
-          <h1 className="mt-2 text-2xl font-extrabold text-[#0f172a]">{quote.full_name}</h1>
+          <h1 className="mt-2 text-2xl font-extrabold font-display text-brand-deep">{quote.full_name}</h1>
           <p className="mt-1 text-sm text-slate-600">
             Creada {new Date(quote.created_at).toLocaleString("es-PA")}
           </p>
@@ -91,7 +91,7 @@ export default async function AdminCotizacionDetailPage({ params }: Props) {
             <CardTitle className="text-base">Comentarios</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="whitespace-pre-line text-sm text-[#475569]">{quote.comments}</p>
+            <p className="whitespace-pre-line text-sm text-slate-600">{quote.comments}</p>
           </CardContent>
         </Card>
       )}

@@ -36,8 +36,10 @@ export function AdminLoginForm({ nextPath }: { nextPath: string }) {
   }
 
   return (
-    <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-white/95 p-8 shadow-2xl backdrop-blur">
-      <h1 className="text-center text-xl font-extrabold text-[#0f172a]">Nixon Admin</h1>
+    <div className="w-full max-w-sm rounded-2xl border border-brand-deep/10 bg-brand-pearl/95 p-8 shadow-2xl shadow-brand-deep/20 backdrop-blur">
+      <h1 className="text-center font-display text-xl font-extrabold text-brand-deep">
+        Nixon Admin
+      </h1>
       <p className="mt-2 text-center text-xs text-slate-600">Acceso protegido con Supabase Auth</p>
       <form onSubmit={(e) => void onSubmit(e)} className="mt-8 space-y-4">
         <div className="space-y-2">
@@ -60,7 +62,7 @@ export function AdminLoginForm({ nextPath }: { nextPath: string }) {
         </Button>
       </form>
       <p className="mt-6 text-center text-xs text-slate-500">
-        <Link href="/" className="text-cyan-600 hover:underline">
+        <Link href="/" className="font-semibold text-brand-turquoise hover:text-brand-deep hover:underline">
           Volver al sitio
         </Link>
       </p>

@@ -17,7 +17,7 @@ export default async function AdminCotizacionesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-[#0f172a]">Cotizaciones</h1>
+        <h1 className="text-2xl font-extrabold font-display text-brand-deep">Cotizaciones</h1>
         <p className="text-sm text-slate-600">
           Gestiona solicitudes y actualiza el estado del embudo.
         </p>
@@ -50,7 +50,7 @@ export default async function AdminCotizacionesPage() {
                 <TableCell className="font-medium">
                   <Link
                     href={`/admin/cotizaciones/${q.id}`}
-                    className="text-cyan-700 hover:underline"
+                    className="text-brand-deep hover:underline"
                   >
                     {q.full_name}
                   </Link>

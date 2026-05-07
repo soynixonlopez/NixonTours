@@ -8,7 +8,7 @@ function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full bg-cyan-50 px-2.5 py-0.5 text-xs font-medium text-[#0f172a] ring-1 ring-cyan-100",
+        "inline-flex items-center rounded-full bg-brand-soft px-2.5 py-0.5 text-xs font-semibold font-display text-brand-deep ring-1 ring-brand-turquoise/25",
         className
       )}
       {...props}

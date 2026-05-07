@@ -1,0 +1,89 @@
+---
+description: Nixon Tours premium platform — accounts, affiliates, payments, memberships, admin
+alwaysApply: true
+---
+
+# Premium platform rules
+
+Nixon Tours is not only a website. It must become a premium tourism platform with:
+
+- Customer accounts
+- Trip history
+- Upcoming trips
+- Manual payment tracking
+- Premium memberships
+- Affiliate program
+- Promo codes
+- Commission system
+- Admin management
+
+## User account rules
+
+Users must be able to:
+
+- Register
+- Login
+- Manage profile
+- View bookings
+- View past trips
+- View upcoming trips
+- Upload payment proofs
+- Track payment progress
+- Join premium membership
+- Apply as affiliate
+- View affiliate code and commissions
+
+## Affiliate rules
+
+- Affiliate commissions must be calculated only when a booking is confirmed or paid.
+- Affiliate codes must be unique.
+- Affiliate status must be approved by admin before earning commissions.
+- Commission rates can be 10% to 15%.
+- Admin can manually change commission rate per affiliate.
+
+## Payment rules
+
+Payments are manual for now. Accepted methods:
+
+- Yappy
+- Bank transfer
+- Cash / manual admin record
+
+Users upload proof. Admin approves or rejects. Never mark a payment as approved automatically.
+
+## Membership rules
+
+Premium membership gives users exclusive benefits. Membership status can be:
+
+- active
+- expired
+- cancelled
+- pending
+
+## Admin rules
+
+Admin must be able to manage:
+
+- Users
+- Bookings
+- Payments
+- Memberships
+- Affiliates
+- Commissions
+- Promo codes
+- Notifications
+
+## Security rules
+
+- Use Supabase Auth and RLS.
+- Users can only access their own data.
+- Admins can access all records.
+- Validate all user input.
+- Never expose private keys.
+
+## UX rules
+
+- The user dashboard must feel premium, simple and exciting.
+- Use cards, progress bars, badges, timelines and clean navigation.
+- The affiliate dashboard must motivate users to share their code.
+- The premium membership page must feel aspirational and valuable.

@@ -20,7 +20,7 @@ export default async function AdminIslasPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-[#0f172a]">Islas</h1>
+          <h1 className="text-2xl font-extrabold font-display text-brand-deep">Islas</h1>
           <p className="text-sm text-slate-600">Nombre, slug, imágenes y estado.</p>
         </div>
         <Button asChild>

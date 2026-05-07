@@ -28,7 +28,7 @@ export function PackageCard({
   );
 
   return (
-    <Card className="group overflow-hidden border-slate-200/80 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-cyan-500/10">
+    <Card className="group overflow-hidden border-brand-deep/10 transition hover:-translate-y-1 hover:border-brand-turquoise/25 hover:shadow-xl hover:shadow-brand-turquoise/15">
       <div className="relative aspect-[16/10] overflow-hidden">
         <Image
           src={img}
@@ -37,27 +37,29 @@ export function PackageCard({
           className="object-cover transition duration-500 group-hover:scale-[1.03]"
           sizes="(max-width:768px) 100vw, 33vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a]/55 to-transparent" />
-        <Badge className="absolute left-4 top-4 bg-white/95 text-[#0f172a] shadow">
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-deep/65 to-transparent" />
+        <Badge className="absolute left-4 top-4 border border-brand-turquoise/20 bg-brand-pearl/95 text-brand-deep shadow-md">
           {packageTypeLabel(pkg.type)}
         </Badge>
       </div>
       <CardContent className="space-y-2 pt-5">
         <div className="flex items-center gap-2 text-xs text-slate-500">
-          <MapPin className="h-3.5 w-3.5 text-cyan-500" />
+          <MapPin className="h-3.5 w-3.5 text-brand-turquoise" />
           <span>{islandName}</span>
         </div>
-        <h3 className="text-lg font-semibold text-[#0f172a]">{pkg.name}</h3>
-        <p className="line-clamp-2 text-sm text-[#475569]">
+        <h3 className="font-display text-lg font-semibold text-brand-deep">
+          {pkg.name}
+        </h3>
+        <p className="line-clamp-2 text-sm text-slate-600">
           {pkg.short_description}
         </p>
         <div className="flex flex-wrap items-center gap-3 pt-1 text-sm">
-          <span className="text-xl font-bold text-[#1e3a5f]">
+          <span className="text-xl font-bold text-brand-deep">
             {formatPricePAB(Number(pkg.price))}
           </span>
           {pkg.duration && (
             <span className="inline-flex items-center gap-1 text-slate-500">
-              <Clock className="h-4 w-4" />
+              <Clock className="h-4 w-4 text-brand-turquoise" />
               {pkg.duration}
             </span>
           )}

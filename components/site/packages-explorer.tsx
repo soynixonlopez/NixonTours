@@ -43,7 +43,7 @@ export function PackagesExplorer({
 
   return (
     <div className="space-y-8">
-      <div className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 rounded-2xl border border-brand-deep/10 bg-brand-pearl p-4 shadow-md shadow-brand-deep/5 sm:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-2">
           <Label>Tipo de paquete</Label>
           <SelectNative value={type} onChange={(e) => setType(e.target.value)}>
@@ -79,13 +79,13 @@ export function PackagesExplorer({
             step={5}
             value={maxPrice}
             onChange={(e) => setMaxPrice(Number(e.target.value))}
-            className="w-full accent-[#00D4FF]"
+            className="w-full accent-brand-turquoise"
           />
         </div>
       </div>
 
       {filtered.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-10 text-center text-sm text-slate-600">
+        <p className="rounded-2xl border border-dashed border-brand-turquoise/30 bg-brand-soft p-10 text-center text-sm text-slate-600">
           No hay paquetes con estos filtros. Ajusta tipo, isla o precio.
         </p>
       ) : (

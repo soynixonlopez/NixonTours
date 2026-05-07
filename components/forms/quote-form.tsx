@@ -74,6 +74,7 @@ export function QuoteForm({
   defaultPackageId,
   defaultPackageType,
   packageName,
+  affiliateCode = null,
 }: {
   islands: IslandRow[];
   settings: SiteSettingsRow | null;
@@ -82,6 +83,7 @@ export function QuoteForm({
   defaultPackageId?: string;
   defaultPackageType?: PackageType;
   packageName?: string;
+  affiliateCode?: string | null;
 }) {
   const [done, setDone] = useState(false);
   const [waUrl, setWaUrl] = useState<string | null>(null);
@@ -139,6 +141,12 @@ export function QuoteForm({
   async function onSubmit(values: QuoteFormValues) {
     try {
       const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const rawRef = affiliateCode?.trim().toUpperCase() ?? "";
+      const ref =
+        rawRef.length > 0 && /^[A-Z0-9_-]{4,24}$/.test(rawRef) ? rawRef : null;
       const payload = {
         full_name: values.full_name.trim(),
         whatsapp: values.whatsapp.trim(),
@@ -153,6 +161,8 @@ export function QuoteForm({
         needs_transport: values.needs_transport,
         comments: values.comments?.trim() || null,
         status: "nueva" as const,
+        user_id: user?.id ?? null,
+        affiliate_code: ref,
       };
 
       const { error } = await supabase.from("quotes").insert(payload);
@@ -175,14 +185,17 @@ export function QuoteForm({
 
   if (done && waUrl) {
     return (
-      <Card className="border-emerald-200 bg-emerald-50/40">
+      <Card className="border-brand-turquoise/25 bg-gradient-to-br from-brand-soft via-brand-pearl to-brand-sand/30">
         <CardHeader>
-          <CardTitle className="text-emerald-900">¡Listo!</CardTitle>
+          <CardTitle className="text-brand-deep">¡Listo!</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 text-sm text-emerald-950/90">
+        <CardContent className="space-y-4 text-sm text-brand-deep/90">
           <p>Tu solicitud fue registrada. Puedes continuar la conversación por WhatsApp.</p>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Button asChild className="bg-[#10B981] hover:bg-[#0ea271]">
+            <Button
+              asChild
+              className="bg-brand-turquoise text-brand-pearl hover:bg-brand-deep"
+            >
               <Link href={waUrl} target="_blank" rel="noreferrer">
                 Abrir WhatsApp con mi mensaje
               </Link>

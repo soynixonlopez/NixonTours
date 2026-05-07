@@ -22,7 +22,7 @@ export default async function AdminPaquetesPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-[#0f172a]">Paquetes</h1>
+          <h1 className="text-2xl font-extrabold font-display text-brand-deep">Paquetes</h1>
           <p className="text-sm text-slate-600">Crea, edita y controla visibilidad.</p>
         </div>
         <Button asChild>

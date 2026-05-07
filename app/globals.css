@@ -1,14 +1,54 @@
 @import "tailwindcss";
 
+/* Nixon Tours — marca oficial */
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --brand-deep: #003b73;
+  --brand-turquoise: #00afcb;
+  --brand-aqua: #27d3e2;
+  --brand-sunset: #fdb633;
+  --brand-sand: #e8d5a8;
+  --brand-pearl: #ffffff;
+  --brand-soft: #f5f7fa;
+  --background: var(--brand-pearl);
+  --foreground: #1e293b;
+  --gradient-brand: linear-gradient(
+    135deg,
+    var(--brand-deep) 0%,
+    var(--brand-turquoise) 100%
+  );
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+/* `@theme inline` puede romper algunos parsers de PostCSS en Turbopack; usar sólo `@theme`. */
+@theme {
+  --color-brand-deep: #003b73;
+  --color-brand-turquoise: #00afcb;
+  --color-brand-aqua: #27d3e2;
+  --color-brand-sunset: #fdb633;
+  --color-brand-sand: #e8d5a8;
+  --color-brand-pearl: #ffffff;
+  --color-brand-soft: #f5f7fa;
+
+  --color-background: #ffffff;
+  --color-foreground: #1e293b;
+
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .bg-gradient-brand {
+    background-image: var(--gradient-brand);
+  }
+
+  .text-gradient-brand {
+    background-image: var(--gradient-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 
 body {
@@ -17,6 +57,12 @@ body {
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
+h1,
+h2,
+h3 {
+  font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+}
+
 ::selection {
-  background: color-mix(in oklab, #00d4ff 35%, white);
+  background: color-mix(in oklab, var(--brand-turquoise) 35%, white);
 }

@@ -12,7 +12,7 @@ export default async function EditarIslaPage({ params }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-[#0f172a]">Editar isla</h1>
+        <h1 className="text-2xl font-extrabold font-display text-brand-deep">Editar isla</h1>
         <p className="text-sm text-slate-600">{initial.name}</p>
       </div>
       <IslandForm initial={initial} />

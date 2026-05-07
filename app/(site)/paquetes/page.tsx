@@ -17,13 +17,13 @@ export default async function PaquetesPage() {
   return (
     <div className="bg-[#F8FAFC] pb-20 pt-10">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-600">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-turquoise">
           Catálogo
         </p>
-        <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-[#0f172a]">
+        <h1 className="mt-2 text-4xl font-extrabold tracking-tight font-display text-brand-deep">
           Paquetes turísticos
         </h1>
-        <p className="mt-3 max-w-2xl text-lg text-[#475569]">
+        <p className="mt-3 max-w-2xl text-lg text-slate-600">
           Estadías, pasadías y camping diseñados para que disfrutes Guna Yala sin
           complicaciones. Cotiza y te respondemos con disponibilidad.
         </p>

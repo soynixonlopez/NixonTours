@@ -22,12 +22,14 @@ export function TestimonialCard({
       viewport={{ once: true }}
       transition={{ delay }}
     >
-      <Card className="h-full border-slate-200/80 bg-white/80 backdrop-blur">
+      <Card className="h-full border-brand-deep/10 bg-brand-pearl/90 backdrop-blur-sm">
         <CardContent className="space-y-4 pt-6">
-          <Quote className="h-8 w-8 text-cyan-500/80" aria-hidden />
-          <p className="text-sm leading-relaxed text-[#475569]">{quote}</p>
+          <Quote className="h-8 w-8 text-brand-sunset" aria-hidden />
+          <p className="text-sm leading-relaxed text-slate-600">{quote}</p>
           <div>
-            <p className="text-sm font-semibold text-[#0f172a]">{author}</p>
+            <p className="text-sm font-semibold text-brand-deep font-display">
+              {author}
+            </p>
             <p className="text-xs text-slate-500">{location}</p>
           </div>
         </CardContent>

@@ -46,7 +46,7 @@ export function GalleryGrid({
     <div className="space-y-14">
       {groups.map(({ island, urls }) => (
         <div key={island.id}>
-          <h3 className="text-xl font-bold text-[#0f172a]">{island.name}</h3>
+          <h3 className="font-display text-xl font-bold text-brand-deep">{island.name}</h3>
           <div className="mt-4 columns-1 gap-3 sm:columns-2 lg:columns-3">
             {urls.map((url, i) => (
               <motion.div

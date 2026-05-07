@@ -11,33 +11,29 @@ export function Footer({ settings }: { settings: SiteSettingsRow | null }) {
     "Hola Nixon Tours, quiero información sobre Guna Yala."
   );
 
-  const logo = settings?.logo_url;
+  const logo = settings?.logo_url ?? "/img/logo.png";
 
   return (
-    <footer className="border-t border-slate-200 bg-[#0f172a] text-slate-200">
+    <footer className="border-t border-white/10 bg-brand-deep text-slate-200">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
         <div className="space-y-4">
-          {logo ? (
+          <span className="inline-flex h-14 w-[min(260px,85%)] items-center overflow-hidden sm:h-16 sm:w-[min(280px,90%)]">
             <Image
               src={logo}
               alt="Nixon Tours"
-              width={160}
-              height={48}
-              className="h-10 w-auto object-contain brightness-0 invert"
+              width={280}
+              height={90}
+              className="h-16 w-auto max-w-none origin-left scale-[1.1] object-contain object-left sm:h-[4.25rem] sm:scale-[1.12]"
             />
-          ) : (
-            <div className="text-lg font-extrabold tracking-tight text-white">
-              NIXON TOURS
-            </div>
-          )}
-          <p className="text-sm leading-relaxed text-slate-400">
+          </span>
+          <p className="text-sm leading-relaxed text-brand-pearl/70">
             Agencia familiar especializada en Guna Yala. Seguridad, cultura y
             playas que enamoran.
           </p>
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-white">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-brand-pearl font-display">
             Explorar
           </h3>
           <ul className="mt-4 space-y-2 text-sm">
@@ -52,7 +48,7 @@ export function Footer({ settings }: { settings: SiteSettingsRow | null }) {
               <li key={href}>
                 <Link
                   href={href as string}
-                  className="text-slate-400 transition hover:text-cyan-300"
+                  className="text-brand-pearl/70 transition hover:text-brand-aqua"
                 >
                   {label as string}
                 </Link>
@@ -62,14 +58,14 @@ export function Footer({ settings }: { settings: SiteSettingsRow | null }) {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-white">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-brand-pearl font-display">
             Contacto
           </h3>
           <ul className="mt-4 space-y-3 text-sm">
             <li>
               <a
                 href={wa}
-                className="inline-flex items-center gap-2 text-slate-400 transition hover:text-cyan-300"
+                className="inline-flex items-center gap-2 text-brand-pearl/70 transition hover:text-brand-aqua"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -80,16 +76,16 @@ export function Footer({ settings }: { settings: SiteSettingsRow | null }) {
               <li>
                 <a
                   href={`mailto:${settings.email}`}
-                  className="inline-flex items-center gap-2 text-slate-400 transition hover:text-cyan-300"
+                  className="inline-flex items-center gap-2 text-brand-pearl/70 transition hover:text-brand-aqua"
                 >
-                  <Mail className="h-4 w-4" />
+                  <Mail className="h-4 w-4 text-brand-aqua" />
                   {settings.email}
                 </a>
               </li>
             )}
             {settings?.address && (
-              <li className="inline-flex gap-2 text-slate-400">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-cyan-300" />
+              <li className="inline-flex gap-2 text-brand-pearl/70">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand-sunset" />
                 <span>{settings.address}</span>
               </li>
             )}
@@ -97,7 +93,7 @@ export function Footer({ settings }: { settings: SiteSettingsRow | null }) {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-white">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-brand-pearl font-display">
             Redes
           </h3>
           <div className="mt-4 flex flex-wrap gap-3">
@@ -106,10 +102,10 @@ export function Footer({ settings }: { settings: SiteSettingsRow | null }) {
                 href={settings.instagram}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 transition hover:bg-white/10"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15 transition hover:bg-white/15"
                 aria-label="Instagram"
               >
-                <Share2 className="h-5 w-5" />
+                <Share2 className="h-5 w-5 text-brand-aqua" />
               </a>
             )}
             {settings?.facebook && (
@@ -117,17 +113,43 @@ export function Footer({ settings }: { settings: SiteSettingsRow | null }) {
                 href={settings.facebook}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 transition hover:bg-white/10"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15 transition hover:bg-white/15"
                 aria-label="Facebook"
               >
-                <Globe className="h-5 w-5" />
+                <Globe className="h-5 w-5 text-brand-aqua" />
               </a>
             )}
           </div>
-          <p className="mt-6 text-xs text-slate-500">
+        </div>
+      </div>
+
+      <div className="border-t border-white/10">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-3 px-4 py-6 text-xs text-brand-pearl/55 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2 sm:px-6 lg:px-8">
+          <span>
             © {new Date().getFullYear()} Nixon Tours. Todos los derechos
             reservados.
-          </p>
+          </span>
+          <span className="hidden h-3 w-px bg-white/20 sm:inline" aria-hidden />
+          <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-display">
+            <Link
+              href="/privacidad"
+              className="text-brand-pearl/70 transition hover:text-brand-aqua"
+            >
+              Política de privacidad
+            </Link>
+            <Link
+              href="/aviso-legal"
+              className="text-brand-pearl/70 transition hover:text-brand-aqua"
+            >
+              Aviso legal
+            </Link>
+            <Link
+              href="/afiliados"
+              className="font-semibold text-brand-aqua transition hover:text-brand-pearl"
+            >
+              Afiliados
+            </Link>
+          </nav>
         </div>
       </div>
     </footer>
