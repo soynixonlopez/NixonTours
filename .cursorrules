@@ -1,0 +1,309 @@
+You are building the official website for Nixon Tours, a premium family-owned tourism agency in Panama specializing in Guna Yala island tours.
+
+PROJECT PERSONALITY:
+The website must feel premium, tropical, modern, trustworthy, clean, dynamic and conversion-focused. Never make it look generic, cheap, cluttered or like a basic template.
+
+BRAND RULES:
+Use Nixon Tours branding consistently.
+
+Primary font:
+- Inter
+
+Brand colors:
+- Neon cyan: #00D4FF
+- Violet: #8B5CF6
+- Tropical green: #10B981
+- Deep navy: #0f172a
+- Corporate blue: #1e3a5f
+- Slate: #334155
+- Text gray: #475569
+- Light background: #F8FAFC
+- White: #FFFFFF
+- Sand gold: #F4C542
+
+Preferred gradients:
+- #00D4FF to #8B5CF6
+- #667eea to #764ba2
+- Deep navy to cyan
+
+Logo rule:
+Never redesign or alter the official Nixon Tours logo. Use the provided logo only. Keep it clean, visible and professional.
+
+VISUAL STYLE:
+Use:
+- Large island photography
+- Rounded corners
+- Soft shadows
+- Smooth animations
+- Premium spacing
+- Modern cards
+- Clean typography
+- Clear CTAs
+- Tropical but professional visuals
+
+Avoid:
+- Overcrowded layouts
+- Too many colors at once
+- Generic stock template feeling
+- Poor spacing
+- Low contrast
+- Unreadable text over images
+- Excessive animations
+
+TECH STACK:
+Use:
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- Supabase
+- Shadcn UI
+- Framer Motion
+- React Hook Form
+- Zod
+- Lucide React
+
+CODE QUALITY:
+- Write clean, modular and scalable code.
+- Use reusable components.
+- Keep files organized.
+- Use TypeScript types.
+- Avoid duplicated logic.
+- Validate all forms.
+- Handle loading, error and empty states.
+- Use environment variables for secrets.
+- Do not hardcode dynamic tourism data when it should come from Supabase.
+- Keep the project mobile-first and responsive.
+
+PUBLIC WEBSITE ROUTES:
+Create:
+- /
+- /paquetes
+- /paquetes/[slug]
+- /islas
+- /islas/[slug]
+- /galeria
+- /nosotros
+- /contacto
+- /cotizar
+
+ADMIN ROUTES:
+Create protected admin area:
+- /admin
+- /admin/login
+- /admin/dashboard
+- /admin/cotizaciones
+- /admin/paquetes
+- /admin/paquetes/nuevo
+- /admin/paquetes/[id]/editar
+- /admin/islas
+- /admin/islas/nueva
+- /admin/islas/[id]/editar
+- /admin/configuracion
+
+DATABASE TABLES:
+Use Supabase with these tables:
+- islands
+- packages
+- quotes
+- site_settings
+
+ISLANDS TABLE:
+Fields:
+- id
+- name
+- slug
+- description
+- main_image_url
+- gallery
+- is_active
+- created_at
+- updated_at
+
+PACKAGES TABLE:
+Fields:
+- id
+- island_id
+- name
+- slug
+- type
+- price
+- duration
+- short_description
+- long_description
+- includes
+- excludes
+- itinerary
+- recommendations
+- policies
+- main_image_url
+- gallery
+- is_active
+- created_at
+- updated_at
+
+QUOTES TABLE:
+Fields:
+- id
+- full_name
+- whatsapp
+- email
+- nationality
+- island_id
+- package_id
+- package_type
+- travel_date
+- adults
+- children
+- needs_transport
+- comments
+- status
+- created_at
+
+SITE SETTINGS TABLE:
+Fields:
+- id
+- whatsapp
+- email
+- instagram
+- facebook
+- address
+- logo_url
+- hero_title
+- hero_subtitle
+- created_at
+- updated_at
+
+INITIAL DATA:
+Seed these islands:
+- Isla Naranjo Chico
+- Isla Senidub
+- Isla Pelícano
+- Isla Pugsub
+- Isla Diablo
+- Isla Perro Chico
+- Isla Perro Grande
+
+Seed Isla Naranjo Chico packages:
+- Estadía: $135
+- Pasadía: $95
+- Camping: $125
+
+CONTENT TONE:
+Use Spanish as the main language.
+Tone should be:
+- Professional
+- Friendly
+- Trustworthy
+- Tropical
+- Clear
+- Persuasive
+
+Avoid exaggerated or fake promises.
+
+CTA STYLE:
+Use strong CTAs:
+- Cotizar mi viaje
+- Ver paquetes
+- Reservar por WhatsApp
+- Quiero conocer Guna Yala
+- Solicitar información
+
+WHATSAPP:
+Main WhatsApp:
++507 6825-2312
+
+Always generate clean WhatsApp links using:
+https://wa.me/50768252312
+
+Quote messages must include:
+- Name
+- Island
+- Package type
+- Travel date
+- Adults
+- Children
+- Transport
+- Comments
+
+SEO RULES:
+Optimize pages for:
+- Tours a Guna Yala
+- Paquetes Guna Yala
+- Pasadía Guna Yala
+- Camping Guna Yala
+- Islas de San Blas
+- Isla Naranjo Chico
+- Isla Perro Chico
+- Isla Diablo
+- Turismo en Panamá
+
+Every public page must have:
+- Metadata title
+- Metadata description
+- Clean slug
+- Semantic HTML
+- Good heading hierarchy
+
+ADMIN PANEL RULES:
+Admin must be simple, clean and functional.
+Admin must allow:
+- View quotes
+- Update quote status
+- Delete quotes
+- Create packages
+- Edit packages
+- Delete packages
+- Activate/deactivate packages
+- Create islands
+- Edit islands
+- Delete islands
+- Upload images
+- Update site settings
+
+Quote statuses:
+- nueva
+- contactado
+- reservado
+- cancelado
+
+COMPONENT RULES:
+Create reusable components:
+- Navbar
+- Footer
+- HeroSection
+- PackageCard
+- IslandCard
+- QuoteForm
+- WhatsAppButton
+- CTASection
+- GalleryGrid
+- TestimonialCard
+- AdminSidebar
+- AdminHeader
+- StatsCard
+- DataTable
+- ImageUploader
+- PackageForm
+- IslandForm
+- StatusBadge
+
+UX RULES:
+The site must be easy to use.
+The quote process must be simple.
+Mobile experience must be excellent.
+Buttons must be visible.
+Forms must be short but complete.
+Images must sell the experience.
+Admin must be fast and practical.
+
+SECURITY RULES:
+- Protect admin routes.
+- Use Supabase Auth.
+- Use row level security where appropriate.
+- Never expose private keys.
+- Validate all user input.
+- Sanitize form data.
+- Use environment variables.
+
+FINAL GOAL:
+Build a complete, premium, dynamic and scalable tourism website for Nixon Tours that can grow as more islands and packages are added from the admin panel.
