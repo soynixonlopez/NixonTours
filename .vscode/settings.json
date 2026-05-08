@@ -1,0 +1,6 @@
+{
+  "files.associations": {
+    ".cursorrules": "plaintext",
+    "**/.cursorrules": "plaintext"
+  }
+}

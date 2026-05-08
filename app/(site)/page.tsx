@@ -1,6 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Sparkles, Shield, Heart, Leaf, Compass, Crown, ArrowRight } from "lucide-react";
+import {
+  Sparkles,
+  Shield,
+  Heart,
+  Leaf,
+  Compass,
+  Crown,
+  ArrowRight,
+  CalendarRange,
+  Receipt,
+} from "lucide-react";
 import { HeroSection } from "@/components/site/hero-section";
 import { IslandCard } from "@/components/site/island-card";
 import { PackageCard } from "@/components/site/package-card";
@@ -223,7 +233,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden border-y border-brand-deep/10 bg-gradient-to-br from-brand-deep via-[#173356] to-brand-deep py-20 text-brand-pearl">
+      <section className="relative overflow-hidden border-y border-brand-deep/10 bg-gradient-to-br from-brand-deep via-[#173356] to-brand-deep py-16 text-brand-pearl sm:py-20">
         <div
           className="pointer-events-none absolute -right-24 top-0 h-64 w-64 rounded-full bg-brand-turquoise/15 blur-3xl"
           aria-hidden
@@ -233,39 +243,63 @@ export default async function HomePage() {
           aria-hidden
         />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-10 lg:grid-cols-[1fr,auto] lg:items-center lg:gap-12">
-            <div>
+          <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-6 shadow-xl shadow-black/20 backdrop-blur-md sm:p-8 lg:p-10">
+            <div className="mx-auto max-w-3xl text-center">
               <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-brand-aqua">
                 Nixon Premium Club
               </p>
-              <h2 className="mt-3 font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
+              <h2 className="mt-3 font-display text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-[2.5rem] lg:leading-tight">
                 Tu portal exclusivo para Guna Yala
               </h2>
-              <p className="mt-4 max-w-xl text-sm leading-relaxed text-brand-pearl/80">
-                Crea tu cuenta y accede a promociones anticipadas, prioridad en
-                reservas, seguimiento de pagos y beneficios pensados para quienes
-                vuelven al paraíso.
+              <p className="mt-4 text-sm leading-relaxed text-brand-pearl/80 sm:text-base">
+                Crea tu cuenta gratis y centraliza reservas, pagos y beneficios.
+                Nixon Premium Club es el mismo tono premium del resto del sitio,
+                con herramientas pensadas para quienes vuelven al paraíso.
               </p>
-              <ul className="mt-6 space-y-2 text-sm text-brand-pearl/75">
-                {[
-                  "Historial de viajes y próximas salidas en un solo lugar",
-                  "Abonos y comprobantes con seguimiento claro del saldo",
-                  "Promociones y prioridad cuando confirmes Nixon Premium Club",
-                ].map((item) => (
-                  <li key={item} className="flex gap-2">
-                    <Crown className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row xl:justify-end">
+
+            <div className="mt-10 grid gap-4 sm:grid-cols-3">
+              {[
+                {
+                  icon: CalendarRange,
+                  title: "Viajes en orden",
+                  body: "Historial y próximas salidas en un solo panel, al estilo del resto de la web.",
+                },
+                {
+                  icon: Receipt,
+                  title: "Pagos transparentes",
+                  body: "Sube comprobantes y sigue abonos y saldo con claridad, sin adivinar montos.",
+                },
+                {
+                  icon: Crown,
+                  title: "Prioridad real",
+                  body: "Promociones anticipadas y prioridad al reservar cuando actives tu plan Premium.",
+                },
+              ].map(({ icon: Icon, title, body }) => (
+                <div
+                  key={title}
+                  className="flex flex-col rounded-2xl border border-white/10 bg-brand-deep/40 p-5 text-left ring-1 ring-white/5 transition hover:border-brand-aqua/25 hover:bg-brand-deep/55"
+                >
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-turquoise/20 text-brand-aqua">
+                    <Icon className="h-5 w-5" aria-hidden />
+                  </span>
+                  <h3 className="mt-4 font-display text-lg font-bold text-brand-pearl">
+                    {title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-brand-pearl/75">
+                    {body}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:mt-12 sm:flex-row sm:items-center">
               <Button
                 asChild
                 size="lg"
                 className="rounded-2xl bg-brand-turquoise font-display font-bold text-brand-deep shadow-lg shadow-brand-deep/25 hover:bg-brand-pearl"
               >
-                <Link href="/registro" className="inline-flex items-center gap-2">
+                <Link href="/registro" className="inline-flex items-center justify-center gap-2">
                   Crear mi cuenta gratuita
                   <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -274,7 +308,7 @@ export default async function HomePage() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="rounded-2xl border-brand-pearl/40 bg-transparent font-display font-semibold text-brand-pearl hover:bg-white/10 hover:text-brand-pearl"
+                className="rounded-2xl border-brand-turquoise/30 bg-brand-deep/30 font-display font-semibold text-brand-pearl backdrop-blur-sm hover:border-brand-pearl/40 hover:bg-white/10 hover:text-brand-pearl"
               >
                 <Link href="/premium">Conocer planes Premium</Link>
               </Button>

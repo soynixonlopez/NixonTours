@@ -11,19 +11,18 @@ export function Footer({ settings }: { settings: SiteSettingsRow | null }) {
     "Hola Nixon Tours, quiero información sobre Guna Yala."
   );
 
-  const logo = settings?.logo_url ?? "/img/logo.png";
-
   return (
     <footer className="border-t border-white/10 bg-brand-deep text-slate-200">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
         <div className="space-y-4">
-          <span className="inline-flex h-14 w-[min(260px,85%)] items-center overflow-hidden sm:h-16 sm:w-[min(280px,90%)]">
+          <span className="relative inline-flex h-11 w-[min(190px,88%)] items-center justify-center overflow-hidden sm:h-12 sm:w-[min(220px,92%)]">
             <Image
-              src={logo}
+              src="/img/logoblanco.png"
               alt="Nixon Tours"
-              width={280}
-              height={90}
-              className="h-16 w-auto max-w-none origin-left scale-[1.1] object-contain object-left sm:h-[4.25rem] sm:scale-[1.12]"
+              width={400}
+              height={120}
+              sizes="(max-width: 640px) 88vw, 220px"
+              className="h-[118%] w-auto max-w-none scale-[1.18] object-contain object-center sm:scale-[1.2]"
             />
           </span>
           <p className="text-sm leading-relaxed text-brand-pearl/70">
