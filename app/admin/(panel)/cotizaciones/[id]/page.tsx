@@ -79,7 +79,7 @@ export default async function AdminCotizacionDetailPage({ params }: Props) {
               {quote.children}
             </p>
             <p>
-              <span className="text-slate-500">Transporte:</span>{" "}
+              <span className="text-slate-500">Carro / transporte terrestre:</span>{" "}
               {quote.needs_transport ? "Sí" : "No"}
             </p>
           </CardContent>

@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export const metadata: Metadata = {
   title: "Cotizar viaje a Guna Yala",
   description:
-    "Formulario de cotización Nixon Tours: isla, paquete, fechas y transporte.",
+    "Formulario de cotización Nixon Tours con isla, tipo de cabaña, impuestos y desglose de precios.",
 };
 
 export default async function CotizarPage() {
@@ -34,6 +34,7 @@ export default async function CotizarPage() {
               islands={islands}
               settings={settings}
               requireTripDetails
+              defaultPackageType="estadia"
               affiliateCode={affiliateCode}
             />
           </CardContent>
