@@ -93,6 +93,16 @@ export function IslandForm({ initial }: { initial?: IslandRow | null }) {
           onChange={(e) => setGalleryText(e.target.value)}
           rows={3}
         />
+        <p className="text-xs text-slate-500">
+          Subí imágenes al bucket <strong>media</strong> de Supabase o pegá la URL pública del Storage.
+        </p>
+        <ImageUploader
+          folder="gallery/islands"
+          label="Subir a Supabase (galería)"
+          onUploaded={(url) =>
+            setGalleryText((t) => (t.trim() ? `${t.trim()},\n${url}` : url))
+          }
+        />
       </div>
       <div className="flex items-center gap-2">
         <input

@@ -180,7 +180,7 @@ export function PackageForm({
             onChange={(e) => setMainUrl(e.target.value)}
             placeholder="https://..."
           />
-          <ImageUploader onUploaded={setMainUrl} />
+          <ImageUploader folder="packages" onUploaded={setMainUrl} />
         </div>
         <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="gallery_text">Galería (URLs separadas por coma o salto de línea)</Label>
@@ -189,6 +189,16 @@ export function PackageForm({
             value={galleryText}
             onChange={(e) => setGalleryText(e.target.value)}
             rows={3}
+          />
+          <p className="text-xs text-slate-500">
+            Opcional: sube al Storage de Supabase (<strong>bucket media</strong>) o pegá la URL pública.
+          </p>
+          <ImageUploader
+            folder="gallery/packages"
+            label="Subir a Supabase (galería)"
+            onUploaded={(url) =>
+              setGalleryText((t) => (t.trim() ? `${t.trim()},\n${url}` : url))
+            }
           />
         </div>
         <div className="flex items-center gap-2 sm:col-span-2">

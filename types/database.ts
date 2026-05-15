@@ -178,6 +178,8 @@ export interface SiteSettingsRow {
   logo_url: string | null;
   hero_title: string | null;
   hero_subtitle: string | null;
+  /** URLs https de imágenes para /galería y el bloque “Galería visual” del inicio */
+  gallery_image_urls?: unknown;
   created_at: string;
   updated_at: string;
 }

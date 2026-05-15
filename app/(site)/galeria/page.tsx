@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { GalleryGrid } from "@/components/site/gallery-grid";
-import { getActiveIslands } from "@/lib/data";
+import { getSiteSettings, getActiveIslands } from "@/lib/data";
+import { getSiteGalleryImageUrls } from "@/lib/gallery-site";
 import { parseGallery } from "@/types/database";
 
 export const metadata: Metadata = {
@@ -9,28 +10,38 @@ export const metadata: Metadata = {
     "Imágenes de nuestras islas: Naranjo Chico, Diablo, Perro Chico y más en San Blas.",
 };
 
+export const revalidate = 120;
+
 export default async function GaleriaPage() {
-  const islands = await getActiveIslands();
-  const hasImages = islands.some(
-    (i) =>
-      Boolean(i.main_image_url) || parseGallery(i.gallery).length > 0
+  const [settings, islands] = await Promise.all([
+    getSiteSettings(),
+    getActiveIslands(),
+  ]);
+
+  const featuredGalleryUrls = getSiteGalleryImageUrls(settings);
+
+  const hasIslandImages = islands.some(
+    (i) => Boolean(i.main_image_url) || parseGallery(i.gallery).length > 0
   );
+  const showEmpty = featuredGalleryUrls.length === 0 && !hasIslandImages;
 
   return (
     <div className="bg-[#F8FAFC] pb-24 pt-10">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-extrabold font-display text-brand-deep">Galería</h1>
         <p className="mt-3 max-w-2xl text-lg text-slate-600">
-          Colores del Caribe panameño, organizados por isla. ¿Quieres aparecer aquí?
-          Envíanos tus fotos tras tu viaje.
+          Las fotos destacadas las definís pegando enlaces públicos (<span className="font-medium">https://…</span>) en{" "}
+          <strong className="font-semibold text-brand-deep/90">Admin → Configuración</strong>. Debajo aparecen también
+          las imágenes que tengas cargadas por isla.
         </p>
         <div className="mt-12">
-          {!hasImages ? (
+          {showEmpty ? (
             <p className="rounded-2xl border border-dashed border-slate-200 bg-white p-12 text-center text-slate-600">
-              Sube imágenes desde el panel admin para activar esta galería.
+              Todavía no hay enlaces en configuración ni fotos por isla. Abrí Administración → Configuración y pegá una
+              URL por línea (por ejemplo desde el bucket público media en Supabase).
             </p>
           ) : (
-            <GalleryGrid islands={islands} />
+            <GalleryGrid islands={islands} featuredImageUrls={featuredGalleryUrls} />
           )}
         </div>
       </div>

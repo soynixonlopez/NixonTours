@@ -20,6 +20,11 @@ export function ImageUploader({
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecciona un archivo de imagen");
+      e.target.value = "";
+      return;
+    }
     setLoading(true);
     try {
       const supabase = createClient();
@@ -32,10 +37,12 @@ export function ImageUploader({
       const { data } = supabase.storage.from("media").getPublicUrl(path);
       if (!data.publicUrl) throw new Error("URL no disponible");
       onUploaded(data.publicUrl);
-      toast.success("Imagen subida");
+      toast.success("Imagen subida a Supabase");
     } catch (err) {
       console.error(err);
-      toast.error("Error al subir. ¿Sesión iniciada y bucket configurado?");
+      toast.error(
+        "Error al subir. ¿Sesión de admin iniciada y bucket público configurado?"
+      );
     } finally {
       setLoading(false);
       e.target.value = "";
@@ -47,9 +54,9 @@ export function ImageUploader({
       <Button type="button" variant="outline" size="sm" disabled={loading} asChild>
         <label className="cursor-pointer">
           {loading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
           ) : (
-            <Upload className="h-4 w-4" />
+            <Upload className="h-4 w-4" aria-hidden />
           )}
           {loading ? "Subiendo…" : label}
           <input type="file" accept="image/*" className="hidden" onChange={(e) => void onFile(e)} />

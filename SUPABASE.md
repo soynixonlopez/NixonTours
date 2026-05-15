@@ -15,12 +15,31 @@ Copia `env.example` a `.env.local` en la raíz del proyecto y reemplaza:
 ## 3. Base de datos
 
 1. Abre **SQL Editor** en Supabase.
-2. Pega y ejecuta el contenido de `supabase/migrations/001_initial_schema.sql` (tablas, RLS, bucket `media`, datos iniciales).
+2. Ejecuta los archivos SQL **en orden** (mismo contenido que en `supabase/migrations/`):
+
+   - `001_initial_schema.sql`
+   - `002_premium_platform.sql`
+   - `003_site_gallery_urls.sql`
 
 ## 4. Autenticación (panel admin)
 
-1. Ve a **Authentication → Users** y crea un usuario (email/contraseña).
-2. Inicia sesión en `/admin/login` con esas credenciales.
+**Importante:** quien se registra en la web (`/registro`) queda como **cliente** (`role = 'customer'`). Eso **no** abre el panel admin.
+
+Para entrar en **Administración**:
+
+1. Usá tu usuario existente en **Authentication → Users** (el email con el que te registraste) o creá uno nuevo con email/contraseña desde el mismo apartado.
+
+2. En **SQL Editor**, promové el perfil a admin (con el mismo email):
+
+   ```sql
+   update public.profiles
+   set role = 'admin'
+   where email = 'tu-email@ejemplo.com';
+   ```
+
+3. Cerrá sesión en la web si estás logueado y abrí **`/admin/login`** (no es lo mismo que `/login` para clientes). Ingresá ese email y contraseña.
+
+La home muestra lo que está en la base de datos (islas, paquetes con **Paquete activo** marcado y la galería definida en **Admin → Configuración**). Al guardar en el panel, tras un refresco o en unos segundos por revalidación, se actualiza también en producción.
 
 Las políticas RLS permiten:
 

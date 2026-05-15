@@ -11,6 +11,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { ImageUploader } from "@/components/admin/image-uploader";
 import { createClient } from "@/lib/supabase/client";
 import type { SiteSettingsRow } from "@/types/database";
+import { parseGallery } from "@/types/database";
+
+function galleryUrlsToText(initial: SiteSettingsRow): string {
+  return parseGallery(initial.gallery_image_urls ?? []).join("\n");
+}
 
 export function SettingsForm({ initial }: { initial: SiteSettingsRow }) {
   const router = useRouter();
@@ -21,6 +26,12 @@ export function SettingsForm({ initial }: { initial: SiteSettingsRow }) {
     e.preventDefault();
     setLoading(true);
     const fd = new FormData(e.currentTarget);
+    const rawGallery = String(fd.get("gallery_image_urls_text") ?? "");
+    const gallery_image_urls = rawGallery
+      .split(/[\n,]+/)
+      .map((s) => s.trim())
+      .filter((u) => /^https?:\/\//i.test(u));
+
     const payload = {
       whatsapp: String(fd.get("whatsapp") || "").trim(),
       email: String(fd.get("email") || "").trim() || null,
@@ -30,6 +41,7 @@ export function SettingsForm({ initial }: { initial: SiteSettingsRow }) {
       logo_url: logoUrl.trim() || null,
       hero_title: String(fd.get("hero_title") || "").trim() || null,
       hero_subtitle: String(fd.get("hero_subtitle") || "").trim() || null,
+      gallery_image_urls,
     };
 
     try {
@@ -80,6 +92,23 @@ export function SettingsForm({ initial }: { initial: SiteSettingsRow }) {
         <Label>Logo (URL o subir)</Label>
         <Input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://..." />
         <ImageUploader folder="brand" onUploaded={setLogoUrl} />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="gallery_image_urls_text">
+          URLs de la galería (una por línea, deben empezar con https://)
+        </Label>
+        <Textarea
+          id="gallery_image_urls_text"
+          name="gallery_image_urls_text"
+          rows={8}
+          className="font-mono text-sm"
+          placeholder={"https://tu-proyecto.supabase.co/storage/v1/object/public/media/gallery/imagen.webp\nhttps://..."}
+          defaultValue={galleryUrlsToText(initial)}
+        />
+        <p className="text-xs text-slate-500">
+          En Supabase Storage (bucket <strong>media</strong>): archivo → copiar URL pública. Solo estos enlaces
+          alimentan la galería pública.
+        </p>
       </div>
       <Button type="submit" disabled={loading} className="gap-2">
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}

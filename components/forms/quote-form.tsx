@@ -1,9 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -20,10 +19,11 @@ import {
   CABIN_TYPE_OPTIONS,
   TRAVELER_TYPE_OPTIONS,
   WORLD_COUNTRIES,
+  QUOTE_PRICE_USD,
   calculateQuoteSummary,
   cabinTypeLabel,
   travelerTypeLabel,
-  type QuoteSummary,
+  type QuoteBreakdown,
 } from "@/lib/quote";
 import {
   buildWhatsAppUrl,
@@ -31,7 +31,18 @@ import {
   normalizeWhatsAppDigits,
   packageTypeLabel,
 } from "@/lib/whatsapp";
+import { QuotePrintDocument } from "@/components/quote/quote-print-document";
 import type { IslandRow, PackageType, SiteSettingsRow } from "@/types/database";
+
+/** RHF submits strings from inputs; coerce to number. Zod 4 `preprocess` confuses Resolver inference; use union + transform + pipe. */
+function numericField(inner: z.ZodNumber) {
+  return z
+    .union([z.string(), z.number()])
+    .transform((val): number =>
+      typeof val === "number" && Number.isFinite(val) ? val : Number(String(val))
+    )
+    .pipe(inner);
+}
 
 const schema = z.object({
   full_name: z.string().min(2, "Indica tu nombre"),
@@ -59,37 +70,36 @@ const schema = z.object({
     z.enum(["shared", "private", "group"]).optional()
   ),
   travel_date: z.string().optional(),
-  nights: z.coerce.number().int().min(1, "Mínimo 1 noche"),
-  adults: z.coerce.number().min(1, "Mínimo 1 adulto"),
-  children: z.coerce.number().min(0),
-  include_tour: z.boolean(),
-  include_boat: z.boolean(),
+  nights: numericField(z.number().int().min(1, "Mínimo 1 noche")),
+  adults: numericField(z.number().min(1, "Mínimo 1 adulto")),
+  children: numericField(z.number().min(0)),
   needs_transport: z.boolean(),
   include_comarcal_taxes: z.boolean(),
   comments: z.string().optional(),
 });
 
-type QuoteFormValues = z.infer<typeof schema>;
+type QuoteFormValues = z.output<typeof schema>;
 
 type SubmittedQuote = {
   values: QuoteFormValues;
   islandName?: string;
   packageName?: string;
-  summary: QuoteSummary;
+  breakdown: QuoteBreakdown;
 };
 
 function buildStoredComments(
   data: QuoteFormValues,
-  summary: QuoteSummary,
+  breakdown: QuoteBreakdown,
   includeBreakdown: boolean
 ): string | null {
   const clientComment = data.comments?.trim();
   if (!includeBreakdown) return clientComment || null;
-  const showNights = data.package_type === "estadia" && Boolean(data.cabin_type);
+  const showNights =
+    (data.package_type === "estadia" || data.package_type === "camping") && Boolean(data.cabin_type);
 
   const lines = [
     clientComment ? `Comentario cliente: ${clientComment}` : null,
-    summary.items.length > 0 ? "Detalle de cotización:" : null,
+    breakdown.lines.length > 0 ? "Detalle de cotización (USD):" : null,
     data.traveler_type ? `Tipo de cliente: ${travelerTypeLabel(data.traveler_type)}` : null,
     data.cabin_type ? `Tipo de cabaña: ${cabinTypeLabel(data.cabin_type)}` : null,
     data.package_type ? `Tipo base: ${packageTypeLabel(data.package_type)}` : null,
@@ -97,14 +107,13 @@ function buildStoredComments(
     showNights ? `Noches: ${data.nights}` : null,
     `Adultos: ${data.adults}`,
     `Niños: ${data.children}`,
-    `Tour incluido: ${data.include_tour ? "Sí" : "No"}`,
-    `Lancha incluida: ${data.include_boat ? "Sí" : "No"}`,
-    `Carro incluido: ${data.needs_transport ? "Sí" : "No"}`,
-    `Impuestos comarcales: ${data.include_comarcal_taxes ? "Sí" : "No"}`,
-    ...summary.items.map(
-      (item) => `${item.label}: ${formatPricePAB(item.unitPrice)} x ${item.quantity} = ${formatPricePAB(item.subtotal)}`
+    `Transporte 4x4 Cd. Panamá: ${data.needs_transport ? "Sí" : "No"}`,
+    `Impuestos comarcales: ${data.include_comarcal_taxes ? "Sí (en total)" : "No incluidos"}`,
+    ...breakdown.lines.map(
+      (item) =>
+        `[${item.tier === "principal" ? "P" : "O"}] ${item.label}: ${formatPricePAB(item.unitPrice)} × ${item.quantity} → ${formatPricePAB(item.subtotal)}`
     ),
-    summary.items.length > 0 ? `Total estimado: ${formatPricePAB(summary.total)}` : null,
+    breakdown.lines.length > 0 ? `TOTAL: ${formatPricePAB(breakdown.grandTotal)} (principales + opcionales)` : null,
   ].filter(Boolean);
 
   return lines.length > 0 ? lines.join("\n") : null;
@@ -112,7 +121,7 @@ function buildStoredComments(
 
 function buildWaMessage(
   data: QuoteFormValues,
-  summary: QuoteSummary,
+  breakdown: QuoteBreakdown,
   includeBreakdown: boolean,
   islandName?: string,
   packageName?: string
@@ -129,7 +138,8 @@ function buildWaMessage(
       .join("\n");
   }
 
-  const showNights = data.package_type === "estadia" && Boolean(data.cabin_type);
+  const showNights =
+    (data.package_type === "estadia" || data.package_type === "camping") && Boolean(data.cabin_type);
   const lines = [
     "Hola Nixon Tours,",
     `Soy ${data.full_name}.`,
@@ -142,16 +152,21 @@ function buildWaMessage(
     data.travel_date ? `Fecha deseada: ${data.travel_date}.` : null,
     showNights ? `Noches: ${data.nights}.` : null,
     `Adultos: ${data.adults}, Niños: ${data.children}.`,
-    `Tour: ${data.include_tour ? "Sí" : "No"}.`,
-    `Lancha: ${data.include_boat ? "Sí" : "No"}.`,
-    `Carro: ${data.needs_transport ? "Sí" : "No"}.`,
-    `Impuestos comarcales: ${data.include_comarcal_taxes ? "Sí" : "No"}.`,
-    summary.items.length > 0 ? "Detalle estimado:" : null,
-    ...summary.items.map(
+    `Transporte 4x4 Cd. Panamá: ${
+      data.needs_transport
+        ? `Incluido (${formatPricePAB(QUOTE_PRICE_USD.TRANSPORTE_4X4_CIUDAD_PANAMA_POR_PERSONA)} c/u)`
+        : "No"
+    }.`,
+    data.include_comarcal_taxes
+      ? `Impuestos comarcales: sí (según clasificación cliente).`
+      : `Impuestos comarcales: no solicitados.`,
+    breakdown.lines.length > 0 ? "Detalle cotización (referencial):" : null,
+    ...breakdown.lines.map(
       (item) =>
-        `- ${item.label}: ${formatPricePAB(item.unitPrice)} x ${item.quantity} = ${formatPricePAB(item.subtotal)}`
+        `- [${item.tier === "principal" ? "Incluye" : "Opcional"}] ${item.label}: ${formatPricePAB(item.unitPrice)} × ${item.quantity} → ${formatPricePAB(item.subtotal)}`
     ),
-    summary.items.length > 0 ? `Total estimado: ${formatPricePAB(summary.total)}.` : null,
+    breakdown.lines.length > 0 ? `TOTAL: ${formatPricePAB(breakdown.grandTotal)} USD.` : null,
+    ...breakdown.notIncludedTexts.map((t) => `— ${t}`),
     data.comments?.trim() ? `Comentarios: ${data.comments.trim()}` : null,
   ].filter(Boolean);
 
@@ -183,7 +198,7 @@ export function QuoteForm({
   const phone = settings?.whatsapp ?? "+50768252312";
   const logo = settings?.logo_url ?? "/img/logo.png";
 
-  const resolver = useMemo(() => {
+  const resolver = useMemo((): Resolver<QuoteFormValues> => {
     return zodResolver(
       schema.superRefine((data, ctx) => {
         if (!requireTripDetails) return;
@@ -222,7 +237,19 @@ export function QuoteForm({
           });
         }
 
-        if (effectivePackageType === "estadia" && !data.cabin_type) {
+        if (data.include_comarcal_taxes && !data.traveler_type) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message:
+              "Indica si sos nacional, residente o turista extranjero para cotizar impuestos comarcales.",
+            path: ["traveler_type"],
+          });
+        }
+
+        const needsCabin =
+          effectivePackageType === "estadia" || effectivePackageType === "camping";
+
+        if (needsCabin && !data.cabin_type) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: "Selecciona el tipo de cabaña",
@@ -230,7 +257,7 @@ export function QuoteForm({
           });
         }
       })
-    );
+    ) as Resolver<QuoteFormValues>;
   }, [defaultPackageType, requireTripDetails]);
 
   const {
@@ -256,8 +283,6 @@ export function QuoteForm({
       nights: 1,
       adults: 2,
       children: 0,
-      include_tour: requireTripDetails,
-      include_boat: requireTripDetails,
       needs_transport: false,
       include_comarcal_taxes: false,
       comments: "",
@@ -266,7 +291,8 @@ export function QuoteForm({
 
   const islandId = watch("island_id");
   const packageType = watch("package_type") ?? defaultPackageType;
-  const showStayFields = requireTripDetails && packageType === "estadia";
+  const showStayFields =
+    requireTripDetails && (packageType === "estadia" || packageType === "camping");
   const orderedIslands = useMemo(() => {
     return [...islands].sort((a, b) => {
       if (a.name === "Isla Naranjo Chico") return -1;
@@ -286,17 +312,15 @@ export function QuoteForm({
       const ref =
         rawRef.length > 0 && /^[A-Z0-9_-]{4,24}$/.test(rawRef) ? rawRef : null;
       const includeBreakdown = requireTripDetails;
-      const summary = calculateQuoteSummary({
+      const breakdown = calculateQuoteSummary({
         packageType: includeBreakdown ? values.package_type : undefined,
         adults: values.adults,
         children: values.children,
         nights: values.nights,
         cabinType: includeBreakdown ? values.cabin_type : undefined,
         travelerType: includeBreakdown ? values.traveler_type : undefined,
-        includeTour: includeBreakdown ? values.include_tour : false,
-        includeBoat: includeBreakdown ? values.include_boat : false,
-        includeCar: includeBreakdown ? values.needs_transport : false,
-        includeTaxes: includeBreakdown ? values.include_comarcal_taxes : false,
+        include4x4: includeBreakdown ? values.needs_transport : false,
+        includeComarcalTaxes: includeBreakdown ? values.include_comarcal_taxes : false,
       });
       const payload = {
         full_name: values.full_name.trim(),
@@ -310,7 +334,7 @@ export function QuoteForm({
         adults: values.adults,
         children: values.children,
         needs_transport: values.needs_transport,
-        comments: buildStoredComments(values, summary, includeBreakdown),
+        comments: buildStoredComments(values, breakdown, includeBreakdown),
         status: "nueva" as const,
         user_id: user?.id ?? null,
         affiliate_code: ref,
@@ -321,7 +345,7 @@ export function QuoteForm({
 
       const url = buildWhatsAppUrl(
         normalizeWhatsAppDigits(phone),
-        buildWaMessage(values, summary, includeBreakdown, selectedIsland?.name, packageName)
+        buildWaMessage(values, breakdown, includeBreakdown, selectedIsland?.name, packageName)
       );
       setWaUrl(url);
       setSubmittedBasic(!includeBreakdown);
@@ -331,7 +355,7 @@ export function QuoteForm({
               values,
               islandName: selectedIsland?.name,
               packageName,
-              summary,
+              breakdown,
             }
           : null
       );
@@ -371,138 +395,92 @@ export function QuoteForm({
   }
 
   if (submittedQuote && waUrl) {
-    const { summary, values } = submittedQuote;
+    const { breakdown, values } = submittedQuote;
+
+    const absoluteLogoUrl =
+      typeof window !== "undefined" && logo.startsWith("/") ? `${window.location.origin}${logo}` : logo;
 
     return (
-      <Card className="border-brand-turquoise/25 bg-gradient-to-br from-brand-soft via-brand-pearl to-brand-sand/30">
-        <CardHeader className="space-y-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <CardTitle className="text-brand-deep">Cotización generada</CardTitle>
-              <p className="mt-2 text-sm text-brand-deep/75">
-                Estimado referencial sujeto a disponibilidad y confirmación final de Nixon Tours.
-              </p>
-            </div>
-            <div className="rounded-2xl bg-white/90 px-4 py-3 shadow-sm">
-              <Image
-                src={logo}
-                alt="Nixon Tours"
-                width={180}
-                height={56}
-                className="h-12 w-auto object-contain"
-              />
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6 text-sm text-brand-deep/90">
-          <div className="grid gap-3 rounded-3xl border border-brand-deep/10 bg-white/80 p-4 sm:grid-cols-2">
-            <p>
-              <span className="text-slate-500">Cliente:</span> {values.full_name}
-            </p>
-            <p>
-              <span className="text-slate-500">WhatsApp:</span> {values.whatsapp}
-            </p>
-            <p>
-              <span className="text-slate-500">Isla:</span> {submittedQuote.islandName ?? "—"}
-            </p>
-            <p>
-              <span className="text-slate-500">Fecha:</span> {values.travel_date || "Por definir"}
-            </p>
-            <p>
-              <span className="text-slate-500">Nacionalidad:</span>{" "}
-              {values.nationality || "No indicada"}
-            </p>
-            <p>
-              <span className="text-slate-500">Tipo de cliente:</span>{" "}
-              {values.traveler_type ? travelerTypeLabel(values.traveler_type) : "—"}
-            </p>
-            {values.cabin_type ? (
-              <p>
-                <span className="text-slate-500">Cabaña:</span>{" "}
-                {cabinTypeLabel(values.cabin_type)}
-              </p>
-            ) : null}
-            <p>
-              <span className="text-slate-500">Viajeros:</span> {summary.travelers} persona(s)
-            </p>
-            {submittedQuote.packageName ? (
-              <p className="sm:col-span-2">
-                <span className="text-slate-500">Paquete:</span> {submittedQuote.packageName}
-              </p>
-            ) : null}
-          </div>
+      <div className="space-y-6">
+        <p className="no-print rounded-2xl bg-brand-soft/80 px-4 py-3 text-sm text-brand-deep">
+          Cotización registrada en Nixon Tours / Supabase.
+          <span className="text-slate-600">
+            {" "}
+            Valores USD referenciales. Confirmación final contra disponibilidad operativa del día y logística marítima.
+          </span>
+        </p>
+        <div className="quote-print-scope mx-auto max-w-4xl">
+          <QuotePrintDocument
+            logoSrc={absoluteLogoUrl}
+            full_name={values.full_name}
+            whatsapp={values.whatsapp}
+            email={values.email}
+            nationality={values.nationality ?? null}
+            travelerType={values.traveler_type ?? null}
+            islandName={submittedQuote.islandName ?? null}
+            packageName={submittedQuote.packageName ?? null}
+            packageType={values.package_type ?? null}
+            travel_date={values.travel_date || null}
+            nights={
+              values.package_type === "estadia" || values.package_type === "camping"
+                ? values.nights
+                : null
+            }
+            adults={values.adults}
+            children={values.children}
+            cabinType={values.cabin_type ?? null}
+            comments={values.comments ?? null}
+            breakdown={breakdown}
+          />
+        </div>
 
-          <div className="overflow-hidden rounded-3xl border border-brand-deep/10 bg-white/90">
-            <div className="grid grid-cols-[1.5fr,0.7fr,0.7fr,0.8fr] gap-3 border-b border-brand-deep/10 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <span>Concepto</span>
-              <span>Precio</span>
-              <span>Cantidad</span>
-              <span>Subtotal</span>
-            </div>
-            <div className="space-y-0">
-              {summary.items.map((item) => (
-                <div
-                  key={item.id}
-                  className="grid grid-cols-[1.5fr,0.7fr,0.7fr,0.8fr] gap-3 border-b border-brand-deep/5 px-4 py-4 last:border-b-0"
-                >
-                  <div>
-                    <p className="font-semibold text-brand-deep">{item.label}</p>
-                    {item.detail ? (
-                      <p className="mt-1 text-xs text-slate-500">{item.detail}</p>
-                    ) : null}
-                  </div>
-                  <span>{formatPricePAB(item.unitPrice)}</span>
-                  <span>{item.quantity}</span>
-                  <span className="font-semibold">{formatPricePAB(item.subtotal)}</span>
-                </div>
-              ))}
-            </div>
-            <div className="flex items-center justify-between bg-brand-deep px-4 py-4 text-brand-pearl">
-              <span className="text-sm font-semibold">Total estimado</span>
-              <span className="text-lg font-extrabold">{formatPricePAB(summary.total)}</span>
-            </div>
-          </div>
+        <div className="no-print mx-auto flex max-w-4xl flex-col gap-4 rounded-2xl border border-brand-deep/10 bg-brand-pearl/90 p-4 sm:flex-row">
+          <Button asChild className="bg-brand-turquoise text-brand-pearl hover:bg-brand-deep">
+            <Link href={waUrl} target="_blank" rel="noreferrer">
+              Abrir WhatsApp con esta cotización
+            </Link>
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="border-brand-deep text-brand-deep"
+            onClick={() => window.print()}
+          >
+            Imprimir / guardar como PDF
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => {
+              setSubmittedQuote(null);
+              setSubmittedBasic(false);
+              setWaUrl(null);
+              reset();
+            }}
+          >
+            Nueva cotización
+          </Button>
+        </div>
 
-          <div className="rounded-3xl border border-brand-deep/10 bg-white/80 p-4 text-sm text-slate-600">
-            <p>Tarifas usadas en esta cotización:</p>
-            <ul className="mt-2 list-disc space-y-1 pl-5">
-              <li>Cabaña compartida 2 a 3 camas: $35 por persona por noche, incluye 3 platos.</li>
-              <li>Cabaña privada 1 cama: $45 por persona por noche, baño compartido.</li>
-              <li>Grupal 7 camas: $35 por persona por noche.</li>
-              <li>Tour: $25 por persona.</li>
-              <li>Lancha: $25 por persona.</li>
-              <li>Carro: $50 por persona.</li>
-              <li>Impuestos comarcales: $7 nacionales/residentes, $22 turistas extranjeros.</li>
-            </ul>
-          </div>
-
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Button
-              asChild
-              className="bg-brand-turquoise text-brand-pearl hover:bg-brand-deep"
-            >
-              <Link href={waUrl} target="_blank" rel="noreferrer">
-                Abrir WhatsApp con mi cotización
-              </Link>
-            </Button>
-            <Button type="button" variant="outline" onClick={() => window.print()}>
-              Imprimir cotización
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setSubmittedQuote(null);
-                setSubmittedBasic(false);
-                setWaUrl(null);
-                reset();
-              }}
-            >
-              Nueva cotización
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        <div className="no-print mx-auto max-w-4xl rounded-xl border border-dashed border-brand-deep/20 bg-white/70 p-4 text-xs leading-relaxed text-slate-600">
+          <p className="font-semibold text-brand-deep">Tarifas modelo (ajústalas en código si Nixon las actualiza)</p>
+          <ul className="mt-2 grid gap-1 sm:grid-cols-2">
+            <li>Estadía — cabaña privada baño común: {formatPricePAB(QUOTE_PRICE_USD.ESTADIA_CABINA_PRIVADA_BANYO_COMUN)} p.p. / noche</li>
+            <li>Estadía — privada 2–3 camas / grupal: {formatPricePAB(QUOTE_PRICE_USD.ESTADIA_CABINA_PRIVADA_2_A_3_CAMAS)} p.p. / noche</li>
+            <li>
+              Lancha (estadía/camping): {formatPricePAB(QUOTE_PRICE_USD.LANCHA_POR_PERSONA)} total p.p. ida y
+              vuelta
+            </li>
+            <li>
+              Lancha y tour en estadía (referencia): +{formatPricePAB(QUOTE_PRICE_USD.LANCHA_POR_PERSONA + QUOTE_PRICE_USD.TOUR_DOS_ISLAS_Y_PISCINA_POR_PERSONA)} p.p.
+              combinados modelo
+            </li>
+            <li>Pasadía modelo (suma tabla): desde {formatPricePAB(QUOTE_PRICE_USD.PASADIA_POR_PERSONA)} por persona</li>
+            <li>Van 4×4 Cd. Panamá (opcional): {formatPricePAB(QUOTE_PRICE_USD.TRANSPORTE_4X4_CIUDAD_PANAMA_POR_PERSONA)} total p.p. ida y vuelta</li>
+            <li>Impuesto comarcal modelo: nacional/residente {formatPricePAB(QUOTE_PRICE_USD.IMPUESTO_COMARCAL_NACIONAL_RESIDENTE)} • extranjero {formatPricePAB(QUOTE_PRICE_USD.IMPUESTO_COMARCAL_EXTRANJERO)} por persona cuando se marca opcional</li>
+          </ul>
+        </div>
+      </div>
     );
   }
 
@@ -641,47 +619,51 @@ export function QuoteForm({
 
         {requireTripDetails ? (
           <div className="space-y-3 rounded-3xl border border-brand-deep/10 bg-brand-soft/50 p-4 sm:col-span-2">
-            <p className="text-sm font-semibold text-brand-deep">Extras para la cotización</p>
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="include_tour"
-                checked={watch("include_tour")}
-                onCheckedChange={(v) => setValue("include_tour", Boolean(v))}
-              />
-              <Label htmlFor="include_tour" className="cursor-pointer">
-                Incluir tour ($25 por persona)
-              </Label>
+            <div>
+              <p className="text-sm font-semibold text-brand-deep">Opcionales adicionales</p>
+              <p className="mt-1 text-xs text-slate-600 leading-relaxed">
+                En estadía y camping las comidas van incluidas en el tarifario del alojamiento. La lancha se cotiza como{" "}
+                <span className="font-medium text-brand-deep">
+                  USD {QUOTE_PRICE_USD.LANCHA_POR_PERSONA} total por persona (ida y vuelta)
+                </span>
+                ; el tour a dos islas + piscina natural es aparte por persona. En pasadía, el conjunto modelo suma{" "}
+                <span className="font-medium text-brand-deep">
+                  USD {QUOTE_PRICE_USD.PASADIA_POR_PERSONA} por persona
+                </span>
+                .
+                Solo los ítems de abajo modifican totales cuando los marques.
+              </p>
             </div>
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="include_boat"
-                checked={watch("include_boat")}
-                onCheckedChange={(v) => setValue("include_boat", Boolean(v))}
-              />
-              <Label htmlFor="include_boat" className="cursor-pointer">
-                Incluir lancha ($25 por persona)
-              </Label>
-            </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-start gap-3">
               <Checkbox
                 id="needs_transport"
                 checked={watch("needs_transport")}
                 onCheckedChange={(v) => setValue("needs_transport", Boolean(v))}
+                className="mt-1"
               />
-              <Label htmlFor="needs_transport" className="cursor-pointer">
-                Incluir carro ($50 por persona)
+              <Label htmlFor="needs_transport" className="cursor-pointer leading-snug">
+                Incluir transporte 4×4 desde Ciudad de Panamá al punto de encuentro/acuerdo Nixon Tours{" "}
+                <span className="text-brand-deep font-semibold">
+                  (+{formatPricePAB(QUOTE_PRICE_USD.TRANSPORTE_4X4_CIUDAD_PANAMA_POR_PERSONA)} por persona
+                  ida y vuelta, modelo)
+                </span>
               </Label>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-start gap-3">
               <Checkbox
                 id="include_comarcal_taxes"
                 checked={watch("include_comarcal_taxes")}
                 onCheckedChange={(v) =>
                   setValue("include_comarcal_taxes", Boolean(v))
                 }
+                className="mt-1"
               />
-              <Label htmlFor="include_comarcal_taxes" className="cursor-pointer">
-                Incluir pago de impuestos comarcales
+              <Label htmlFor="include_comarcal_taxes" className="cursor-pointer leading-snug">
+                Sumar estimado de{" "}
+                <span className="font-semibold text-brand-deep">
+                  impuesto comarcal
+                </span>{" "}
+                según tu clasificación nacional / residente / extranjero (no incluido por defecto)
               </Label>
             </div>
           </div>

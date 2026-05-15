@@ -23,6 +23,8 @@ import {
   getActivePackages,
   getSiteSettings,
 } from "@/lib/data";
+import { getSiteGalleryImageUrls } from "@/lib/gallery-site";
+import { parseGallery } from "@/types/database";
 
 export const metadata: Metadata = {
   title: "Inicio",
@@ -31,11 +33,22 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
+  const galleryPreviewCap = 6;
+
   const [settings, islands, packages] = await Promise.all([
     getSiteSettings(),
     getActiveIslands(),
     getActivePackages(),
   ]);
+
+  const featuredGalleryUrls = getSiteGalleryImageUrls(settings).slice(0, galleryPreviewCap);
+
+  const islandsGalleryPreview = islands.slice(0, 3);
+  const hasIslandGalleryImages = islandsGalleryPreview.some(
+    (i) => Boolean(i.main_image_url) || parseGallery(i.gallery).length > 0
+  );
+  const hasGalleryPreview =
+    featuredGalleryUrls.length > 0 || hasIslandGalleryImages;
 
   const heroTitle =
     settings?.hero_title ??
@@ -44,10 +57,20 @@ export default async function HomePage() {
     settings?.hero_subtitle ??
     "Paquetes de estadía, pasadía y camping hacia las mejores islas de Guna Yala.";
 
-  const featuredIslands = islands.slice(0, 4);
-  const popular = [...packages]
-    .sort((a, b) => Number(a.price) - Number(b.price))
-    .slice(0, 3);
+  const featuredIslands = (() => {
+    const others = islands.filter((i) => i.slug !== "isla-naranjo-chico");
+    if (others.length >= 4) return others.slice(0, 4);
+    return [...others, ...islands.filter((i) => i.slug === "isla-naranjo-chico")].slice(0, 4);
+  })();
+
+  const naranjoIslandId = islands.find((i) => i.slug === "isla-naranjo-chico")?.id;
+  const naranjoPackages = naranjoIslandId
+    ? packages.filter((p) => p.island_id === naranjoIslandId)
+    : [];
+  const popular =
+    naranjoPackages.length > 0
+      ? [...naranjoPackages].sort((a, b) => Number(a.price) - Number(b.price)).slice(0, 3)
+      : [...packages].sort((a, b) => Number(a.price) - Number(b.price)).slice(0, 3);
 
   const steps = [
     { title: "Elige tu isla", desc: "Te guiamos según tu estilo de viaje.", icon: Compass },
@@ -60,35 +83,6 @@ export default async function HomePage() {
     <>
       <HeroSection title={heroTitle} subtitle={heroSubtitle} />
 
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-brand-turquoise">
-              Islas destacadas
-            </p>
-            <h2 className="mt-2 font-display text-3xl font-extrabold tracking-tight text-brand-deep">
-              Paraísos que enamoran
-            </h2>
-            <p className="mt-2 max-w-2xl text-slate-600">
-              Isla Naranjo Chico es nuestra insignia. También llevamos a Senidub,
-              Pelícano, Pugsub, Diablo y las islas Perro.
-            </p>
-          </div>
-          <Button asChild variant="outline">
-            <Link href="/islas">Ver todas las islas</Link>
-          </Button>
-        </div>
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {featuredIslands.length === 0 ? (
-            <p className="col-span-full text-sm text-slate-600">
-              Configura Supabase y ejecuta el SQL inicial para ver islas.
-            </p>
-          ) : (
-            featuredIslands.map((i) => <IslandCard key={i.id} island={i} />)
-          )}
-        </div>
-      </section>
-
       <section className="bg-brand-pearl py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -97,10 +91,11 @@ export default async function HomePage() {
                 Paquetes populares
               </p>
               <h2 className="mt-2 font-display text-3xl font-extrabold text-brand-deep">
-                Precios transparentes, experiencia premium
+                Isla Naranjo Chico: estadía, pasadía y camping
               </h2>
               <p className="mt-2 max-w-2xl text-slate-600">
-                Cotiza en minutos y recibe asistencia real de nuestro equipo.
+                Nuestros planes más solicitados parten desde la isla insignia. Precios claros y
+                asistencia real del equipo Nixon Tours.
               </p>
             </div>
             <Button asChild>
@@ -116,6 +111,35 @@ export default async function HomePage() {
               ))
             )}
           </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-brand-turquoise">
+              Islas destacadas
+            </p>
+            <h2 className="mt-2 font-display text-3xl font-extrabold tracking-tight text-brand-deep">
+              Más islas destacadas para tu viaje
+            </h2>
+            <p className="mt-2 max-w-2xl text-slate-600">
+              Isla Naranjo Chico es nuestra casa. Coordinamos estadía y pasadía en Senidub,
+              Pelícano, Pugsub, Diablo y las islas Perro.
+            </p>
+          </div>
+          <Button asChild variant="outline">
+            <Link href="/islas">Ver todas las islas</Link>
+          </Button>
+        </div>
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {featuredIslands.length === 0 ? (
+            <p className="col-span-full text-sm text-slate-600">
+              Configura Supabase y ejecuta el SQL inicial para ver islas.
+            </p>
+          ) : (
+            featuredIslands.map((i) => <IslandCard key={i.id} island={i} />)
+          )}
         </div>
       </section>
 
@@ -224,10 +248,17 @@ export default async function HomePage() {
             </Button>
           </div>
           <div className="mt-10">
-            {islands.length === 0 ? (
-              <p className="text-sm text-slate-600">Añade imágenes desde el admin.</p>
+            {!hasGalleryPreview ? (
+              <p className="rounded-2xl border border-dashed border-slate-200 bg-brand-pearl p-10 text-center text-sm text-slate-600">
+                En Admin → Configuración pegá los enlaces https de tus fotos (URL pública de Supabase
+                Storage u otro CDN) o añadí imágenes por isla.
+              </p>
             ) : (
-              <GalleryGrid islands={islands.slice(0, 3)} />
+              <GalleryGrid
+                islands={islandsGalleryPreview}
+                featuredImageUrls={featuredGalleryUrls}
+                groupByIsland={false}
+              />
             )}
           </div>
         </div>
